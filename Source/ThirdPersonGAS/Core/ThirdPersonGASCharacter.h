@@ -33,7 +33,7 @@ class AThirdPersonGASCharacter : public ACharacter, public IAbilitySystemInterfa
 	UInputMappingContext* DefaultMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=GAS, meta = (AllowPrivateAccess = "true"))
-	UTBAbilitySystemComponent* AbilitySystemComponent;
+	TWeakObjectPtr<UTBAbilitySystemComponent> AbilitySystemComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=GAS, meta = (AllowPrivateAccess = "true"))
 	UTBAbilityInputBindingComponent* AbilityInputBindingComponent;
@@ -69,6 +69,8 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+	virtual void OnRep_PlayerState() override;
 
 public:
 	/** Returns CameraBoom subobject **/

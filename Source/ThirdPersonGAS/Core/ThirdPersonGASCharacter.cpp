@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ThirdPersonGASPlayerState.h"
 #include "Components/TBAbilityInputBindingComponent.h"
 #include "Components/TBAbilitySystemComponent.h"
 
@@ -60,9 +61,6 @@ AThirdPersonGASCharacter::AThirdPersonGASCharacter()
 
 	bAlwaysRelevant = true;
 	
-	AbilitySystemComponent = CreateDefaultSubobject<UTBAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
-	
 	AbilityInputBindingComponent = CreateDefaultSubobject<UTBAbilityInputBindingComponent>(TEXT("Ability Input Binding Component"));
 }
 
@@ -78,6 +76,17 @@ void AThirdPersonGASCharacter::BeginPlay()
 		{
 			subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+}
+
+void AThirdPersonGASCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (AThirdPersonGASPlayerState* playerState = GetPlayerState<AThirdPersonGASPlayerState>())
+	{
+		AbilitySystemComponent = Cast<UTBAbilitySystemComponent>(playerState->GetAbilitySystemComponent());
+		playerState->GetAbilitySystemComponent()->InitAbilityActorInfo(playerState, this);
 	}
 }
 
@@ -102,9 +111,10 @@ void AThirdPersonGASCharacter::PossessedBy(AController* newController)
 {
 	Super::PossessedBy(newController);
 
-	if(AbilitySystemComponent)
+	if (AThirdPersonGASPlayerState* playerState = GetPlayerState<AThirdPersonGASPlayerState>())
 	{
-		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+		AbilitySystemComponent = Cast<UTBAbilitySystemComponent>(playerState->GetAbilitySystemComponent());
+		playerState->GetAbilitySystemComponent()->InitAbilityActorInfo(playerState, this);
 	}
 
 	SetOwner(newController);
@@ -112,7 +122,7 @@ void AThirdPersonGASCharacter::PossessedBy(AController* newController)
 
 UAbilitySystemComponent* AThirdPersonGASCharacter::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+	return AbilitySystemComponent.Get();
 }
 
 void AThirdPersonGASCharacter::Move(const FInputActionValue& Value)
