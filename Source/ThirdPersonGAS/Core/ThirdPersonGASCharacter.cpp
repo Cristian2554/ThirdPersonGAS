@@ -116,8 +116,6 @@ void AThirdPersonGASCharacter::PossessedBy(AController* newController)
 		AbilitySystemComponent = Cast<UTBAbilitySystemComponent>(playerState->GetAbilitySystemComponent());
 		playerState->GetAbilitySystemComponent()->InitAbilityActorInfo(playerState, this);
 	}
-
-	SetOwner(newController);
 }
 
 UAbilitySystemComponent* AThirdPersonGASCharacter::GetAbilitySystemComponent() const

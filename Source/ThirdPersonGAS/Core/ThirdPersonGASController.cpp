@@ -19,16 +19,6 @@ void AThirdPersonGASController::BeginPlay()
 	
 }
 
-void AThirdPersonGASController::AcknowledgePossession(APawn* pawn)
-{
-	Super::AcknowledgePossession(pawn);
-
-	if (const IAbilitySystemInterface* pawnAbilityInterface = Cast<IAbilitySystemInterface>(pawn))
-	{
-		pawnAbilityInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(pawn, pawn);
-	}
-}
-
 // Called every frame
 void AThirdPersonGASController::Tick(float DeltaTime)
 {
